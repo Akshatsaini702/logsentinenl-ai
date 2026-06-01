@@ -1,6 +1,5 @@
 # logsentinenl-ai
 AI-Powered Log Anomaly Detection &amp; Threat Monitoring Platform
-# LogSentinel AI 🛡️
 
 An intelligent log monitoring and anomaly detection platform 
 that uses ML to detect threats, suspicious patterns, and 
