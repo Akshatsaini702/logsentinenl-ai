@@ -12,7 +12,7 @@ const Navbar = () => {
       <div className="flex gap-6 text-gray-400 text-sm">
         <Link to="/" className="hover:text-white transition">Home</Link>
         <Link to="/dashboard" className="hover:text-white transition">Dashboard</Link>
-        <span className="hover:text-white cursor-pointer transition">Alerts</span>
+        <Link to="/alerts"className="hover:text-white transition">Alerts</Link>
         <span className="hover:text-white cursor-pointer transition">Settings</span>
       </div>
     </nav>
