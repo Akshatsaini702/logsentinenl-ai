@@ -4,6 +4,7 @@ import UploadZone from '../components/UploadZone';
 
 import { useState } from 'react';
 import LogsTable from '../components/LogsTable';
+import AIRecommendations from '../components/AIRecommendations';
 
 const anomalyData = [
   { time: '00:00', anomalies: 2 },
@@ -90,6 +91,7 @@ const handleFileUpload = (file) => {
   )}
 </div>
 <LogsTable />
+<AIRecommendations />
 
 
     </div>
