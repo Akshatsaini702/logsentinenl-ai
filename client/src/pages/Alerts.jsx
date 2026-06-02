@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 
 const allAlerts = [
@@ -26,10 +27,26 @@ const Alerts = () => {
   const [typeFilter, setTypeFilter] = useState("All");
   const [searchIP, setSearchIP] = useState("");
   const [selectedAlert, setSelectedAlert] = useState(null);
+  const [alerts, setAlerts] = useState([]);
+  useEffect(() => {
+  const fetchAlerts = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/alerts"
+      );
+
+      setAlerts(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  fetchAlerts();
+}, []);
 
   const severities = ["All", "Critical", "High", "Medium", "Low"];
   const types = ["All", "Authentication", "API", "Network", "Security", "Performance"];
-  const filtered = allAlerts.filter((a) => {
+  const filtered = alerts.filter((a) => {
   const matchSeverity =
     severityFilter === "All" ||
     a.severity === severityFilter;
