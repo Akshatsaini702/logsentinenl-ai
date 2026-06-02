@@ -1,7 +1,9 @@
 import StatsCard from '../components/StatsCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import UploadZone from '../components/UploadZone';
+
 import { useState } from 'react';
+import LogsTable from '../components/LogsTable';
 
 const anomalyData = [
   { time: '00:00', anomalies: 2 },
@@ -87,6 +89,8 @@ const handleFileUpload = (file) => {
     </div>
   )}
 </div>
+<LogsTable />
+
 
     </div>
   );
