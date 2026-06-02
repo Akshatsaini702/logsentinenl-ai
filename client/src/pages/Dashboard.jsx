@@ -1,5 +1,7 @@
 import StatsCard from '../components/StatsCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import UploadZone from '../components/UploadZone';
+import { useState } from 'react';
 
 const anomalyData = [
   { time: '00:00', anomalies: 2 },
@@ -17,6 +19,12 @@ const anomalyData = [
 ];
 
 const Dashboard = () => {
+    const [uploadedFile, setUploadedFile] = useState(null);
+
+const handleFileUpload = (file) => {
+  setUploadedFile(file);
+  console.log('File uploaded:', file.name);
+};
   const stats = [
     { title: "Total Logs", value: "10,482", icon: "📋", color: "blue" },
     { title: "Anomalies Detected", value: "143", icon: "⚠️", color: "yellow" },
@@ -63,6 +71,22 @@ const Dashboard = () => {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      {/* Upload Zone */}
+<div className="mt-8 bg-gray-900 border border-gray-800 rounded-xl p-6">
+  <h3 className="text-white font-semibold text-lg mb-6">
+    Upload Log File
+  </h3>
+  <UploadZone onFileUpload={handleFileUpload} />
+  {uploadedFile && (
+    <div className="mt-4 bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 flex items-center gap-3">
+      <span className="text-purple-400 text-xl">✅</span>
+      <div>
+        <p className="text-white font-semibold">{uploadedFile.name}</p>
+        <p className="text-gray-400 text-sm">{(uploadedFile.size / 1024).toFixed(2)} KB</p>
+      </div>
+    </div>
+  )}
+</div>
 
     </div>
   );
