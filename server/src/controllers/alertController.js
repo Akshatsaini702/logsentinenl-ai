@@ -2,12 +2,28 @@ const Alert = require('../models/Alert');
 
 // Get all alerts
 const getAlerts = async (req, res) => {
-  try {
-    const alerts = await Alert.find().sort({ createdAt: -1 });
-    res.json(alerts);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  res.json([
+    {
+      _id: 1,
+      timestamp: "2025-06-01 12:03:21",
+      ip: "45.33.32.156",
+      event: "Brute force attack",
+      severity: "Critical",
+      type: "Authentication",
+      status: "Blocked",
+      aiAnalysis: "Multiple failed login attempts detected."
+    },
+    {
+      _id: 2,
+      timestamp: "2025-06-01 12:05:44",
+      ip: "103.21.244.0",
+      event: "Port scan detected",
+      severity: "High",
+      type: "Network",
+      status: "Flagged",
+      aiAnalysis: "Sequential port scanning activity detected."
+    }
+  ]);
 };
 
 // Create alert
