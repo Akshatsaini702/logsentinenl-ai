@@ -1,14 +1,47 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAnalysis } from '../context/AnalysisContext';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { setAnalysisResult } = useAnalysis();
   const [file, setFile] = useState(null);
 const [loading, setLoading] = useState(false);
+const handleUpload = async () => {
+  if (!file) {
+    alert("Please select a log file first");
+    return;
+  }
 
-  return (
-    <div className="flex flex-col items-center justify-center mt-32 gap-4">
+  try {
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await axios.post(
+      "http://localhost:5000/api/analyze",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    setAnalysisResult(response.data);
+
+    navigate("/dashboard");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to analyze logs");
+  } finally {
+    setLoading(false);
+  }
+};
+   return (
+  <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6 px-4">
       <div className="bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs px-4 py-2 rounded-full">
         AI-Powered Log Monitoring Platform
       </div>
@@ -20,25 +53,50 @@ const [loading, setLoading] = useState(false);
         suspicious patterns, and threats in real-time.
       </p>
       <div className="mt-8 flex flex-col items-center gap-4">
+ <label className="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+  Choose Log File
   <input
     type="file"
     accept=".log,.txt"
     onChange={(e) => setFile(e.target.files[0])}
-    className="text-white"
+    className="hidden"
   />
+</label>
 
-  <button
-    className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg"
-  >
-    Upload Log File
-  </button>
+  {file && (
+  <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-5 w-full max-w-md">
+    <div className="mb-4">
+  <p className="text-white font-semibold">
+    ✅ {file.name}
+  </p>
+
+  <p className="text-gray-400 text-sm">
+    {(file.size / 1024).toFixed(2)} KB
+  </p>
+
+  <p className="text-green-400 text-sm mt-2">
+    Ready for analysis 🚀
+  </p>
 </div>
-      <button
-        onClick={() => navigate('/dashboard')}
-        className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition"
-      >
-        Get Started →
-      </button>
+
+    <button
+      onClick={handleUpload}
+      disabled={loading}
+      className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-semibold transition"
+    >
+      {loading ? (
+  <div className="flex items-center justify-center gap-2">
+    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+    <span>Analyzing Logs...</span>
+  </div>
+) : (
+  "Analyze Logs"
+)}
+    </button>
+  </div>
+)}
+</div>
+     
     </div>
   );
 };

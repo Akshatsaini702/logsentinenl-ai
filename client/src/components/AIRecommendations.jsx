@@ -1,41 +1,4 @@
-const recommendations = [
-  {
-    id: 1,
-    type: "Critical",
-    title: "Brute Force Attack Detected",
-    description: "IP 45.33.32.156 made 47 failed login attempts in 2 minutes. Immediate action required.",
-    action: "Block IP 45.33.32.156 and implement rate limiting on /api/login endpoint.",
-    icon: "🚨",
-    color: "red",
-  },
-  {
-    id: 2,
-    type: "High",
-    title: "Unusual API Traffic Pattern",
-    description: "/api/data endpoint received 1,200 requests in 30 seconds from 3 different IPs.",
-    action: "Implement request throttling. Consider adding CAPTCHA for suspicious IPs.",
-    icon: "⚠️",
-    color: "orange",
-  },
-  {
-    id: 3,
-    type: "Medium",
-    title: "Port Scan Activity",
-    description: "Sequential port scanning detected from IP 103.21.244.0 between 12:10-12:12.",
-    action: "Add firewall rule to block IP. Enable port scan detection alerts.",
-    icon: "🔍",
-    color: "yellow",
-  },
-  {
-    id: 4,
-    type: "Suggestion",
-    title: "Database Query Optimization",
-    description: "Average DB response time increased by 340ms in last hour. Possible missing indexes.",
-    action: "Review slow query logs. Add indexes on frequently queried fields.",
-    icon: "💡",
-    color: "blue",
-  },
-];
+import { useAnalysis } from "../context/AnalysisContext";
 
 const colorMap = {
   red: "border-red-500/30 bg-red-500/5",
@@ -52,13 +15,70 @@ const badgeMap = {
 };
 
 const AIRecommendations = () => {
+  const { analysisResult } = useAnalysis();
+
+  const recommendations = [];
+
+  if (analysisResult?.summary?.error_count > 0) {
+    recommendations.push({
+      id: 1,
+      type: "Critical",
+      title: "Suspicious Error Activity Detected",
+      description: `${analysisResult.summary.error_count} suspicious error events were detected in uploaded logs.`,
+      action:
+        "Review affected endpoints and investigate unusual request patterns.",
+      icon: "🚨",
+      color: "red",
+    });
+  }
+
+  if (analysisResult?.summary?.high_frequency_ips?.length > 0) {
+    recommendations.push({
+      id: 2,
+      type: "High",
+      title: "High Frequency IP Activity",
+      description: `${analysisResult.summary.high_frequency_ips.length} IP addresses generated abnormal traffic patterns.`,
+      action:
+        "Monitor these IPs and consider rate limiting or temporary blocking.",
+      icon: "⚠️",
+      color: "orange",
+    });
+  }
+
+  if (analysisResult?.anomalies_count > 0) {
+    recommendations.push({
+      id: 3,
+      type: "Medium",
+      title: "Anomalies Found",
+      description: `${analysisResult.anomalies_count} anomalies were detected by the ML engine.`,
+      action:
+        "Review anomaly logs and validate whether they represent real threats.",
+      icon: "🔍",
+      color: "yellow",
+    });
+  }
+
+  recommendations.push({
+    id: 4,
+    type: "Suggestion",
+    title: "Improve Monitoring Coverage",
+    description:
+      "Enable automated alerting and long-term anomaly tracking.",
+    action:
+      "Store anomaly history in MongoDB and create notification workflows.",
+    icon: "💡",
+    color: "blue",
+  });
+
   return (
     <div className="mt-8 bg-gray-900 border border-gray-800 rounded-xl p-6">
       <div className="flex items-center gap-3 mb-6">
         <span className="text-2xl">🤖</span>
         <div>
-          <h3 className="text-white font-semibold text-lg">AI Recommendations</h3>
-          <p className="text-gray-400 text-sm">Powered by Claude AI</p>
+          <h3 className="text-white font-semibold text-lg">
+            AI Recommendations
+          </h3>
+          <p className="text-gray-400 text-sm">Powered by LogSentinel AI</p>
         </div>
       </div>
 
@@ -70,17 +90,29 @@ const AIRecommendations = () => {
           >
             <div className="flex items-start gap-4">
               <span className="text-2xl">{rec.icon}</span>
+
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className={`text-xs font-semibold px-2 py-1 rounded-full ${badgeMap[rec.color]}`}>
+                  <span
+                    className={`text-xs font-semibold px-2 py-1 rounded-full ${badgeMap[rec.color]}`}
+                  >
                     {rec.type}
                   </span>
-                  <h4 className="text-white font-semibold">{rec.title}</h4>
+
+                  <h4 className="text-white font-semibold">
+                    {rec.title}
+                  </h4>
                 </div>
-                <p className="text-gray-400 text-sm mb-3">{rec.description}</p>
+
+                <p className="text-gray-400 text-sm mb-3">
+                  {rec.description}
+                </p>
+
                 <div className="bg-gray-900/60 rounded-lg p-3">
                   <p className="text-gray-300 text-sm">
-                    <span className="text-purple-400 font-semibold">Recommended Action: </span>
+                    <span className="text-purple-400 font-semibold">
+                      Recommended Action:
+                    </span>{" "}
                     {rec.action}
                   </p>
                 </div>

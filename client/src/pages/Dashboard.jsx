@@ -1,10 +1,11 @@
 import StatsCard from '../components/StatsCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import UploadZone from '../components/UploadZone';
+import { useNavigate } from "react-router-dom";
 
 import { useState } from 'react';
 import LogsTable from '../components/LogsTable';
 import AIRecommendations from '../components/AIRecommendations';
+import { useAnalysis } from "../context/AnalysisContext";
 
 const anomalyData = [
   { time: '00:00', anomalies: 2 },
@@ -22,6 +23,8 @@ const anomalyData = [
 ];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { analysisResult } = useAnalysis();
     const [uploadedFile, setUploadedFile] = useState(null);
 
 const handleFileUpload = (file) => {
@@ -29,18 +32,51 @@ const handleFileUpload = (file) => {
   console.log('File uploaded:', file.name);
 };
   const stats = [
-    { title: "Total Logs", value: "10,482", icon: "📋", color: "blue" },
-    { title: "Anomalies Detected", value: "143", icon: "⚠️", color: "yellow" },
-    { title: "Critical Alerts", value: "12", icon: "🚨", color: "red" },
-    { title: "Normal Entries", value: "10,327", icon: "✅", color: "green" },
-  ];
+  {
+    title: "Total Logs",
+    value: analysisResult?.total || 0,
+    icon: "📋",
+    color: "blue",
+  },
+  {
+    title: "Anomalies Detected",
+    value: analysisResult?.anomalies_count || 0,
+    icon: "⚠️",
+    color: "yellow",
+  },
+  {
+    title: "Suspicious IPs",
+    value: analysisResult?.summary?.high_frequency_ips?.length || 0,
+    icon: "🚨",
+    color: "red",
+  },
+  {
+    title: "Error Events",
+    value: analysisResult?.summary?.error_count || 0,
+    icon: "✅",
+    color: "green",
+  },
+];
 
   return (
     <div className="px-8 py-10">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white">Dashboard</h2>
-        <p className="text-gray-400 mt-1">Real-time log monitoring & threat detection</p>
-      </div>
+      <div className="mb-8 flex items-center justify-between">
+  <div>
+    <h2 className="text-3xl font-bold text-white">
+      Dashboard
+    </h2>
+    <p className="text-gray-400 mt-1">
+      Real-time log monitoring & threat detection
+    </p>
+  </div>
+
+  <button
+    onClick={() => navigate("/alerts")}
+    className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg font-semibold transition"
+  >
+    View Alerts →
+  </button>
+</div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -74,22 +110,7 @@ const handleFileUpload = (file) => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {/* Upload Zone */}
-<div className="mt-8 bg-gray-900 border border-gray-800 rounded-xl p-6">
-  <h3 className="text-white font-semibold text-lg mb-6">
-    Upload Log File
-  </h3>
-  <UploadZone onFileUpload={handleFileUpload} />
-  {uploadedFile && (
-    <div className="mt-4 bg-purple-500/10 border border-purple-500/20 rounded-lg p-4 flex items-center gap-3">
-      <span className="text-purple-400 text-xl">✅</span>
-      <div>
-        <p className="text-white font-semibold">{uploadedFile.name}</p>
-        <p className="text-gray-400 text-sm">{(uploadedFile.size / 1024).toFixed(2)} KB</p>
-      </div>
-    </div>
-  )}
-</div>
+  
 <LogsTable />
 <AIRecommendations />
 
