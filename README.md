@@ -256,11 +256,4 @@ Add screenshots here:
 * Cloud log ingestion
 * Email/SMS notifications
 
----
 
-
----
-
-
-
-Bhai ye README recruiter ko dekhte hi samajh aa jayega ki ye koi random CRUD app nahi hai. Iske baad bas 4 screenshots daal dena aur repo ka level kaafi upar chala jayega. 🔥🏆
