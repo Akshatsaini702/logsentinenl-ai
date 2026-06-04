@@ -21,9 +21,18 @@ const analyzeLogs = async (req, res) => {
 );
 
 const result = response.data;
-
+console.log("ML RESULT:");
+console.log(result);
+const processedIPs = new Set();
 // Create alerts from anomalies
 for (const anomaly of result.anomalies || []) {
+  const key = `${anomaly.ip}-${anomaly.status_code}`;
+
+  if (processedIPs.has(key)) {
+    continue;
+  }
+
+  processedIPs.add(key);
   let event = "Suspicious Activity";
   let type = "Security";
   let severity = "Medium";
@@ -53,6 +62,7 @@ for (const anomaly of result.anomalies || []) {
       "Internal server errors detected. Immediate investigation recommended.";
   }
 
+ try {
   await Alert.create({
     ip: anomaly.ip,
     event,
@@ -61,6 +71,9 @@ for (const anomaly of result.anomalies || []) {
     status: "Flagged",
     aiAnalysis,
   });
+} catch (err) {
+  console.error("ALERT CREATE ERROR:", err);
+}
 }
 
 res.json(result);

@@ -13,7 +13,6 @@ const Navbar = () => {
         <Link to="/" className="hover:text-white transition">Home</Link>
         <Link to="/dashboard" className="hover:text-white transition">Dashboard</Link>
         <Link to="/alerts"className="hover:text-white transition">Alerts</Link>
-        <span className="hover:text-white cursor-pointer transition">Settings</span>
       </div>
     </nav>
   );

@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db.js");
 const alertRoutes = require("./routes/alertRoutes");
 const analyzeRoutes = require("./routes/analyzeRoutes");
+const reportRoutes = require("./routes/reportRoutes");
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use("/api/alerts", alertRoutes);
 app.use("/api/analyze",analyzeRoutes);
+app.use("/api/report", reportRoutes);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
