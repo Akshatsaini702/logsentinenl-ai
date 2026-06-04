@@ -13,7 +13,7 @@ const analyzeLogs = async (req, res) => {
     );
 
     const response = await axios.post(
-  "https://logsentinenl-ml.onrender.com/analyze",
+  "http://logsentinenl-ml.onrender.com/analyze",
   formData,
   {
     headers: formData.getHeaders(),
