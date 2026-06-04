@@ -13,7 +13,7 @@ const analyzeLogs = async (req, res) => {
     );
 
     const response = await axios.post(
-  "http://127.0.0.1:8000/analyze",
+  "https://logsentinenl-ml.onrender.com/analyze",
   formData,
   {
     headers: formData.getHeaders(),
