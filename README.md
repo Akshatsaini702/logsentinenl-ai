@@ -223,28 +223,6 @@ uvicorn main:app --reload
 
 ---
 
-## 📷 Screenshots
-
-Add screenshots here:
-
-### Home Page
-
-![Home](screenshots/home.png)
-
-### Dashboard
-
-![Dashboard](screenshots/dashboard.png)
-
-### Alerts Page
-
-![Alerts](screenshots/alerts.png)
-
-### PDF Report
-
-![PDF](screenshots/report.png)
-
----
-
 ## 🎯 Future Improvements
 
 * Advanced ML anomaly detection
