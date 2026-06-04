@@ -21,7 +21,7 @@ const handleUpload = async () => {
     formData.append("file", file);
 
     const response = await axios.post(
-      "http://localhost:5000/api/analyze",
+      "https://logsentinenl-ai.onrender.com/api/analyze",
       formData,
       {
         headers: {

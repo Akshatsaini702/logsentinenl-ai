@@ -91,7 +91,7 @@ const Dashboard = () => {
     <button
       onClick={() =>
         window.open(
-          "http://localhost:5000/api/report",
+          "https://logsentinenl-ai.onrender.com/api/report",
           "_blank"
         )
       }
