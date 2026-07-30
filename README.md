@@ -1,93 +1,234 @@
-# LogSentinel AI
+# LogSentinel AI 🚀
 
-Log anomaly detection and threat monitoring for server access logs. Upload an
-access log and it flags brute-force attempts, unauthorised access and error
-spikes, then explains what to do about each finding.
+### AI-Powered Log Monitoring & Threat Detection Platform
 
-## Features
+LogSentinel AI is a full-stack cybersecurity monitoring platform that automatically analyzes server logs, detects suspicious activities using Machine Learning and rule-based detection, generates security alerts, and provides downloadable PDF security reports.
 
-- 📁 Upload access logs (`.log` / `.txt`, up to 10 MB) via drag & drop
-- 🔎 Rule-based anomaly detection — request-frequency bursts and high-risk
-  status codes (401 / 403 / 500)
-- 📊 Dashboard with severity breakdown, flagged entries and suspicious IPs
-- 🧠 Prioritised recommendations for each class of finding
-- 🔔 Alert history persisted to MongoDB, filterable by severity, type and IP
-- 📄 PDF report export
+The system helps security teams identify threats such as brute-force attacks, unauthorized access attempts, and server-side failures through an intuitive analytics dashboard.
 
-## Architecture
+---
 
+## 🌐 Live Demo
+
+**Frontend:**
+[https://logsentinenl-ai.vercel.app/](https://logsentinenl-ai.vercel.app/)
+
+**Backend API:**
+[https://logsentinenl-ai.onrender.com/](https://logsentinenl-ai.onrender.com/)
+
+**ML Service:**
+[https://logsentinenl-ml.onrender.com/](https://logsentinenl-ml.onrender.com/)
+
+---
+
+## 📌 Features
+
+### Log Upload & Analysis
+
+* Upload `.log` files directly through the web interface
+* Parse Apache/Nginx-style server logs
+* Detect suspicious events automatically
+* Process logs in real-time
+
+### AI/ML Threat Detection
+
+* Failed login detection (401 errors)
+* Unauthorized access detection (403 errors)
+* Server failure detection (500 errors)
+* High-frequency IP activity detection
+* Rule-based anomaly identification
+* Security event classification
+
+### Security Dashboard
+
+* Total logs analyzed
+* Anomalies detected
+* Suspicious IP tracking
+* Error event monitoring
+* Dynamic anomaly visualization
+* Real-time security metrics
+
+### Alert Management
+
+* Automatic alert generation
+* Severity classification
+* Threat categorization
+* AI-generated security explanations
+* MongoDB alert storage
+
+### PDF Security Reports
+
+* Download professional incident reports
+* Security summary generation
+* Threat statistics
+* Alert documentation
+
+---
+
+## 🏗️ System Architecture
+
+```text
+User
+ │
+ ▼
+React Frontend (Vercel)
+ │
+ ▼
+Node.js Backend (Render)
+ │
+ ├── MongoDB Atlas
+ │
+ └── FastAPI ML Service (Render)
+          │
+          ▼
+     Threat Detection Engine
 ```
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* React.js
+* Tailwind CSS
+* Recharts
+* Axios
+* React Router
+
+### Backend
+
+* Node.js
+* Express.js
+* MongoDB Atlas
+* Mongoose
+* Multer
+* PDFKit
+
+### Machine Learning Service
+
+* FastAPI
+* Uvicorn
+
+### Deployment
+
+* Vercel (Frontend)
+* Render (Backend & ML Service)
+* MongoDB Atlas (Database)
+
+---
+
+## 🔍 Threat Detection Logic
+
+LogSentinel AI currently detects:
+
+### Failed Login Attempts
+
+```text
+HTTP 401 Responses
+```
+
+Potential brute-force attack activity.
+
+### Unauthorized Access Attempts
+
+```text
+HTTP 403 Responses
+```
+
+Attempts to access restricted resources.
+
+### Server Errors
+
+```text
+HTTP 500 Responses
+```
+
+Critical backend failures requiring investigation.
+
+### High Frequency IP Activity
+
+```text
+Multiple requests from the same IP
+```
+
+Possible scanning, abuse, or automated attack behavior.
+
+---
+
+## 📊 Dashboard Metrics
+
+The dashboard provides:
+
+* Total Log Entries
+* Anomalies Detected
+* Suspicious IP Count
+* Error Event Count
+* Anomaly Distribution Graph
+* Security Recommendations
+
+---
+
+## 📁 Project Structure
+
+```text
 logsentinenl-ai/
-├── client/       React + Tailwind + Recharts   (static host, e.g. Vercel)
-├── server/       Node.js + Express             (API + alert persistence)
-└── ml-service/   FastAPI                       (log parsing + detection)
+│
+├── client/          # React Frontend
+│
+├── server/          # Node.js Backend
+│
+├── ml-service/      # FastAPI ML Service
+│
+└── README.md
 ```
 
-The client talks only to `server/`, which forwards the uploaded file to
-`ml-service/` and stores any resulting alerts in MongoDB. Analysis works even
-when MongoDB is unavailable — only alert history is lost.
+---
 
-## Running locally
+## 🚀 Local Installation
 
-Three processes. Start the detection service first.
+### Clone Repository
 
 ```bash
-# 1. detection service  → http://localhost:8000
-cd ml-service
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+git clone https://github.com/Akshatsaini702/logsentinenl-ai.git
+cd logsentinenl-ai
+```
 
-# 2. API  → http://localhost:5000
-cd server
-npm install
-cp .env.example .env        # then fill in MONGO_URI
-ML_SERVICE_URL=http://localhost:8000 npm run dev
+### Frontend
 
-# 3. client  → http://localhost:3000
+```bash
 cd client
 npm install
-REACT_APP_API_URL=http://localhost:5000 npm start
+npm start
 ```
 
-### Configuration
-
-| Where    | Variable             | Purpose                                          |
-| -------- | -------------------- | ------------------------------------------------ |
-| `server` | `MONGO_URI`          | Alert history. Optional — analysis works without. |
-| `server` | `ML_SERVICE_URL`     | Base URL of the detection service.                |
-| `server` | `PORT`               | Usually set by the host.                          |
-| `client` | `REACT_APP_API_URL`  | Base URL of the API. Baked in at build time.      |
-
-## Log format
-
-Each line needs an IP address and a 3-digit HTTP status code. Common and
-combined access-log formats work out of the box:
-
-```
-45.33.32.156 - - [01/Jun/2025:10:00:01] "POST /login HTTP/1.1" 401 512
-```
-
-Files are decoded as UTF-8, UTF-16 or Latin-1 automatically, so logs exported
-from PowerShell or Notepad are accepted.
-
-## Detection rules
-
-An entry is flagged when either holds:
-
-- its source IP appears **5 or more times** in the file, or
-- its status code is **401, 403 or 500**
-
-Severity maps from the status code: 500 → Critical, 401/403 → High, otherwise
-Medium.
-
-## Testing
+### Backend
 
 ```bash
-cd client && npm test        # component smoke tests
+cd server
+npm install
+npm run dev
 ```
 
-## Status
+### ML Service
 
-🚧 In development. Detection is rule-based; the "AI" naming reflects the intent
-rather than a trained model — there is no ML model, WebSocket transport or LLM
-integration in the current code.
+```bash
+cd ml-service
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+---
+
+## 🎯 Future Improvements
+
+* Advanced ML anomaly detection
+* User authentication & RBAC
+* SIEM integration
+* Real-time WebSocket alerts
+* Threat intelligence feeds
+* IP reputation scoring
+* Cloud log ingestion
+* Email/SMS notifications
+
+
