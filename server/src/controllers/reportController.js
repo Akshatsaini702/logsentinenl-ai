@@ -1,7 +1,12 @@
 const PDFDocument = require("pdfkit");
 const Alert = require("../models/Alert");
+const { isDatabaseReady, databaseUnavailable } = require("../utils/database");
 
 const generateReport = async (req, res) => {
+  // The report is built entirely from stored alerts, so there is nothing to
+  // render without a database connection.
+  if (!isDatabaseReady()) return databaseUnavailable(res);
+
   try {
     const alerts = await Alert.find().sort({ createdAt: -1 });
 

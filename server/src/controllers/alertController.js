@@ -1,20 +1,26 @@
 const Alert = require('../models/Alert');
+const { isDatabaseReady, databaseUnavailable } = require('../utils/database');
 
 // Get all alerts
 const getAlerts = async (req, res) => {
+  if (!isDatabaseReady()) return databaseUnavailable(res);
+
   try {
     const alerts = await Alert.find().sort({ createdAt: -1 });
 
     res.json(alerts);
   } catch (error) {
     res.status(500).json({
-      message: error.message,
+      error: 'Could not load alerts',
+      detail: error.message,
     });
   }
 };
 
 // Create alert
 const createAlert = async (req, res) => {
+  if (!isDatabaseReady()) return databaseUnavailable(res);
+
   try {
     const alert = new Alert(req.body);
     const savedAlert = await alert.save();
@@ -26,6 +32,8 @@ const createAlert = async (req, res) => {
 
 // Seed dummy alerts
 const seedAlerts = async (req, res) => {
+  if (!isDatabaseReady()) return databaseUnavailable(res);
+
   try {
     await Alert.deleteMany({});
     const dummyAlerts = [
